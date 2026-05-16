@@ -348,6 +348,15 @@ const buildQuestion = (cards, mode = 'mixed') => {
 };
 
 const StackTrainer = ({ theme, inputStyle }) => {
+  const SectionTitle = ({ icon: Icon, title, subtitle }) => (
+    <div style={{ marginBottom: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: theme.gold, fontWeight: 800, letterSpacing: '0.04em' }}>
+        <Icon size={18} />
+        {title}
+      </div>
+      {subtitle && <p style={{ margin: '6px 0 0', color: theme.sub, fontSize: 13, lineHeight: 1.55 }}>{subtitle}</p>}
+    </div>
+  );
   const [stackState, setStackState] = useState(getDefaultStackState());
   const [flippedCards, setFlippedCards] = useState({});
   const [quizMode, setQuizMode] = useState('positionToCard');
