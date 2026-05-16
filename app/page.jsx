@@ -48,15 +48,15 @@ const PRACTICE_CATEGORIES = [
 
 const RESOURCE_LINKS = [
   {
-    title: '친구의 마술 채널',
+    title: '김찬엽 마술사 유튜브 채널',
     description: '추천 영상, 공연 기록, 렉처 후기 등을 모아둘 공간입니다.',
-    url: '',
+    url: 'https://www.youtube.com/@__duke__kim',
     label: 'YouTube 링크 넣기',
   },
   {
     title: '추천 마술샵',
-    description: '카드, 동전, 클로즈업 도구 등 연습에 필요한 자료를 연결할 수 있습니다.',
-    url: '',
+    description: '카드, 동전, 클로즈업 도구 등 마술에 관한 모든 것.',
+    url: 'https://www.neomagicshop.co.kr',
     label: '네오매직 링크 넣기',
   },
   {
