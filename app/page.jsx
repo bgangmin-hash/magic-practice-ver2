@@ -51,13 +51,13 @@ const RESOURCE_LINKS = [
     title: '김찬엽 마술사 유튜브 채널',
     description: '추천 영상, 공연 기록, 렉처 후기 등을 모아둘 공간입니다.',
     url: 'https://www.youtube.com/@__duke__kim',
-    label: 'YouTube 링크 넣기',
+    label: 'YouTube 링크 클릭!',
   },
   {
     title: '추천 마술샵',
     description: '카드, 동전, 클로즈업 도구 등 마술에 관한 모든 것.',
-    url: 'https://www.neomagicshop.co.kr',
-    label: '네오매직 링크 넣기',
+    url: 'https://www.neoinception.co.kr',
+    label: '네오매직 링크 클릭!',
   },
   {
     title: '추천 자료',
