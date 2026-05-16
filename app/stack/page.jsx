@@ -272,39 +272,6 @@ const generateEightKings = (suitOrder = ['C', 'H', 'S', 'D']) => (
   Array.from({ length: 52 }, (_, i) => `${EIGHT_KINGS_RANKS[i % 13]}${suitOrder[i % 4]}`)
 );
 
-const STACK_LIBRARY = [
-  {
-    title: '팩토리 오더',
-    type: '기본 배열 / 준비용',
-    summary: '새 덱을 처음 뜯었을 때의 배열입니다. 실전 스택보다는 폴스 셔플 시연이나 다른 스택을 만들기 위한 출발점으로 쓰기 좋습니다.',
-  },
-  {
-    title: 'A to K 정렬 덱',
-    type: '초보자용 정렬 스택',
-    summary: 'A부터 K까지의 순서가 네 번 반복되는 단순한 배열입니다. 계산이 쉽고 공개가 필요 없는 루틴에서 활용하기 좋습니다.',
-  },
-  {
-    title: '8 Kings',
-    type: '니모닉 + 패턴 스택',
-    summary: '8, K, 3, 10, 2, 7, 9, 5, Q, 4, A, 6, J 순서를 반복합니다. 영어 문장으로 숫자 순서를 외울 수 있고, 수트는 CHaSeD 순서로 반복되게 구성했습니다.',
-  },
-  {
-    title: '사이 스테빈스',
-    type: '매스메티컬 스택',
-    summary: '숫자가 3씩 증가하고 수트가 반복되는 대표적인 수학적 스택입니다. 다음 카드 계산이 쉽지만 패턴이 보일 수 있습니다.',
-  },
-  {
-    title: '보리스 와일드 메모라이즈드 덱',
-    type: '계산형 메모라이즈드 덱',
-    summary: '간단한 공식으로 위치와 카드를 계산할 수 있는 구조입니다. 계산 속도가 빠른 대신 패턴 노출에 유의해야 합니다.',
-  },
-  {
-    title: '니콜라 카드 시스템',
-    type: '순수 니모닉 스택',
-    summary: '숫자와 카드를 단어로 치환하고, 두 단어를 연결한 장면으로 기억하는 방식입니다. 커스텀 스택 암기에도 응용하기 좋습니다.',
-  },
-];
-
 const getDefaultStackState = () => ({
   selectedDeck: 'mnemonica',
   viewRange: 'all',
@@ -596,18 +563,6 @@ const StackTrainer = ({ theme, inputStyle }) => {
         {cards.length < 52 && stackState.selectedDeck === 'custom' && <p style={{ color: '#ff9b9b', fontSize: 12, lineHeight: 1.5 }}>커스텀 덱은 52장을 입력해야 전체 퀴즈가 정확히 작동합니다.</p>}
       </div>
 
-      <SectionTitle icon={BookOpen} title="Stack Library" subtitle="대표적인 스택의 성격과 장단점을 짧게 정리한 공부 공간입니다." />
-      <div style={{ display: 'grid', gap: 10 }}>
-        {STACK_LIBRARY.map((item) => (
-          <div key={item.title} style={{ background: theme.inputBg, border: `1px solid ${theme.border}`, borderRadius: 16, padding: 14 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline', flexWrap: 'wrap', marginBottom: 6 }}>
-              <strong style={{ color: theme.gold, fontSize: 15 }}>{item.title}</strong>
-              <span style={{ color: theme.sub, fontSize: 11 }}>{item.type}</span>
-            </div>
-            <div style={{ color: theme.text, fontSize: 13, lineHeight: 1.6 }}>{item.summary}</div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
