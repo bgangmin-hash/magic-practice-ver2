@@ -612,18 +612,30 @@ const StackTrainer = ({ theme, inputStyle }) => {
   );
 };
 
-const PixelMagician = ({ active }) => {
+const PixelMagician = ({ active, level = 1 }) => {
   const C = {
-    H: '#3a1f5e',
-    G: '#d4af37',
-    S: '#f0d4a8',
-    E: '#0a0510',
-    R: '#5a2a8a',
-    D: '#3a1a5a',
-    M: '#2a1530',
-    W: '#7a4a20',
+    H: '#3a1f5e',  // 모자 진보라
+    G: '#d4af37',  // 금색
+    S: '#f0d4a8',  // 살색
+    E: '#0a0510',  // 눈동자
+    R: '#5a2a8a',  // 망토 보라
+    D: '#3a1a5a',  // 망토 그림자
+    M: '#2a1530',  // 입
+    W: '#7a4a20',  // 마술봉 갈색
+    K: '#ffffff',  // 카드 흰색
+    L: '#ff5544',  // 카드 빨강
+    F: '#ff8800',  // 불꽃 주황
+    Y: '#fff5cc',  // 불꽃 노랑
   };
-  const art = [
+
+  // 칭호 구간에 맞춘 외형 진화
+  const hasCard = level >= 3;          // Lv3+ 수련 마술사: 카드
+  const cloakStrong = level >= 5;      // Lv5+ 숙련 마술사: 망토 풍성
+  const floatingCards = level >= 7;    // Lv7+ 마스터 마술사: 떠다니는 카드
+  const wandShine = level >= 9;        // Lv9+ 대마술사: 지팡이 빛 + 불꽃
+  const aura = level >= 11;            // Lv11+ 전설의 마술사: 오라
+
+  let art = [
     '.....HH.......',
     '....HHHH......',
     '...HHHGHH.....',
@@ -639,15 +651,72 @@ const PixelMagician = ({ active }) => {
     '.DRRRRRRRRWWWG',
     '..DD..DD......',
   ];
+
+  if (hasCard) {
+    art = art.map((row, i) => {
+      if (i === 11) return 'KRRRRRRRRR....';
+      if (i === 12) return 'LRRRRRRRRWWWG';
+      return row;
+    });
+  }
+
+  if (cloakStrong) {
+    art = [
+      '.....HH.......',
+      '....HHHH......',
+      '...HHHGHH.....',
+      '..HHHHHHHH....',
+      '.HHHHHHHHHH...',
+      'GGGGGGGGGGGG..',
+      '...SSSSSS.....',
+      '..SEESSEES....',
+      '..SSSSSSSS....',
+      '..RSMMMSR.....',
+      '.RRRRRRRRR....',
+      hasCard ? 'KRRRRRRRRRR...' : '.RRRRRRRRR....',
+      hasCard ? 'LRRRRRRRRWWWG' : '.DRRRRRRRRWWWG',
+      '.DDD..DDD.....',
+    ];
+  }
+
   const P = 7;
   const W = 14;
   const H = 14;
+
   return (
-    <div style={{ display: 'inline-block', animation: active ? 'none' : 'idleBob 1.8s ease-in-out infinite' }}>
-      <svg width={W * P} height={H * P} viewBox={`0 0 ${W * P} ${H * P}`} style={{ imageRendering: 'pixelated', display: 'block', shapeRendering: 'crispEdges' }}>
+    <div style={{ display: 'inline-block', position: 'relative', animation: active ? 'none' : 'idleBob 1.8s ease-in-out infinite' }}>
+      {aura && (
+        <div style={{ position: 'absolute', inset: -20, background: 'radial-gradient(circle, rgba(212, 175, 55, 0.35) 0%, rgba(212, 175, 55, 0.08) 50%, transparent 75%)', borderRadius: '50%', animation: 'auraPulse 3s ease-in-out infinite', pointerEvents: 'none', zIndex: 0 }} />
+      )}
+      <svg width={W * P} height={H * P} viewBox={`0 0 ${W * P} ${H * P}`} style={{ imageRendering: 'pixelated', display: 'block', shapeRendering: 'crispEdges', position: 'relative', zIndex: 1 }}>
+        {wandShine && (
+          <>
+            <circle cx={13 * P + P / 2} cy={12 * P + P / 2} r={P * 1.6} fill={C.Y} opacity="0.5">
+              <animate attributeName="r" values={`${P * 1.2};${P * 2};${P * 1.2}`} dur="1.4s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.3;0.7;0.3" dur="1.4s" repeatCount="indefinite" />
+            </circle>
+            <circle cx={13 * P + P / 2} cy={12 * P + P / 2} r={P * 0.7} fill={C.Y} opacity="0.95" />
+          </>
+        )}
         {art.map((row, y) => row.split('').map((ch, x) => ch === '.' ? null : (
           <rect key={`${x}-${y}`} x={x * P} y={y * P} width={P} height={P} fill={C[ch] || '#fff'} />
         )))}
+        {floatingCards && (
+          <g>
+            {[{ x: 1, y: -1, delay: '0s' }, { x: 5, y: -3, delay: '0.4s' }, { x: 9, y: -1, delay: '0.8s' }].map((card, i) => (
+              <g key={i} style={{ animation: 'cardFloat 2.4s ease-in-out infinite', animationDelay: card.delay, transformOrigin: 'center' }}>
+                <rect x={card.x * P} y={card.y * P} width={P * 1.6} height={P * 2.2} fill={C.K} stroke={C.M} strokeWidth="0.8" rx="1" />
+                <rect x={card.x * P + 1} y={card.y * P + 1} width={P * 1.6 - 2} height={P / 2} fill={i % 2 === 0 ? C.L : C.M} />
+              </g>
+            ))}
+          </g>
+        )}
+        {wandShine && (
+          <g style={{ animation: 'flameFlicker 0.6s ease-in-out infinite alternate', transformOrigin: 'center' }}>
+            <ellipse cx={0.5 * P} cy={6 * P} rx={P * 0.5} ry={P * 0.9} fill={C.F} opacity="0.85" />
+            <ellipse cx={0.5 * P} cy={6 * P} rx={P * 0.3} ry={P * 0.5} fill={C.Y} />
+          </g>
+        )}
       </svg>
     </div>
   );
@@ -826,7 +895,7 @@ export default function MagicPracticeTracker() {
 
   const exportBackup = () => {
     const payload = {
-      app: 'Magic Trainer',
+      app: 'Magic Practice',
       exportedAt: new Date().toISOString(),
       practiceData,
       notes,
@@ -953,6 +1022,9 @@ export default function MagicPracticeTracker() {
         @keyframes levelUpFade { 0% { opacity: 0; transform: translateY(20px); } 15% { opacity: 1; transform: translateY(0); } 85% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-20px); } }
         @keyframes levelUpNumber { 0% { opacity: 0; transform: scale(0.3) rotate(-8deg); } 20% { opacity: 1; transform: scale(1.25) rotate(0deg); } 35% { transform: scale(1); } 85% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.3); } }
         @keyframes idleBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes cardFloat { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-6px) rotate(3deg); } }
+        @keyframes auraPulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+        @keyframes flameFlicker { from { transform: scaleY(1); opacity: 0.85; } to { transform: scaleY(1.3); opacity: 1; } }
         @keyframes magicShootA { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 12% { opacity: 1; } 50% { transform: translate(140px, -12px) scale(0.75); opacity: 1; } 100% { transform: translate(290px, -3px) scale(0.2); opacity: 0; } }
         @keyframes magicShootB { 0% { transform: translate(0, 0) scale(1); opacity: 0; } 12% { opacity: 1; } 50% { transform: translate(140px, 10px) scale(0.75); opacity: 1; } 100% { transform: translate(290px, 3px) scale(0.2); opacity: 0; } }
         @keyframes wandGlow { 0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; } 50% { transform: translate(-50%, -50%) scale(1.8); opacity: 1; } }
@@ -994,7 +1066,7 @@ export default function MagicPracticeTracker() {
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 8 }}>
             <Wand2 size={20} style={{ color: theme.gold }} />
-            <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: 30, fontWeight: 600, letterSpacing: '0.12em', margin: 0, color: theme.text }}>Magic Trainer</h1>
+            <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: 30, fontWeight: 600, letterSpacing: '0.12em', margin: 0, color: theme.text }}>Magic Practice</h1>
             <Wand2 size={20} style={{ color: theme.gold, transform: 'scaleX(-1)' }} />
           </div>
           <p style={{ fontSize: 13, letterSpacing: '0.18em', textTransform: 'uppercase', color: theme.sub, margin: 0 }}>혼자 조용히 연습하고, 기록하고, 성장하는 마술 연습 다이어리 앱</p>
@@ -1029,7 +1101,7 @@ export default function MagicPracticeTracker() {
         </div>
 
         <div style={{ position: 'relative', height: 120, marginBottom: 20, background: theme.card, border: `1px solid ${theme.border}`, borderRadius: 14, overflow: 'hidden', display: 'flex', alignItems: 'center', paddingLeft: 20 }}>
-          <div style={{ position: 'relative', zIndex: 1 }}><PixelMagician active={isRunning} /></div>
+          <div style={{ position: 'relative', zIndex: 1 }}><PixelMagician active={isRunning} level={levelInfo.level} /></div>
           {isRunning && (
             <>
               <div style={{ position: 'absolute', left: 125, top: '50%', marginTop: 35, width: 8, height: 8, background: '#f4d97a', borderRadius: '50%', boxShadow: '0 0 18px #d4af37, 0 0 32px rgba(212, 175, 55, 0.6)', animation: 'wandGlow 0.7s ease-in-out infinite', zIndex: 1, pointerEvents: 'none' }} />
@@ -1114,8 +1186,7 @@ export default function MagicPracticeTracker() {
           <nav style={{ padding: 14, borderRight: `1px solid ${theme.border}`, display: 'flex', flexDirection: 'column', gap: 8 }}>
             <MenuButton id="Practice" icon={BarChart3} label="Practice" />
             <MenuButton id="Magic Notes" icon={BookOpen} label="Magic Notes" />
-            <MenuLink href="/stack" icon={Sparkles} label="Stack Trainer" subtitle="스택 암기 훈련" />
-            <MenuLink href="/acan" icon={Wand2} label="아칸 연습" subtitle="ACAN 상황 리허설" />
+            <MenuLink href="/stack" icon={Sparkles} label="Stack Trainer" subtitle="전용 화면으로 열기" />
             <MenuButton id="Links" icon={LinkIcon} label="Links" />
             <MenuButton id="Settings" icon={Settings} label="Settings" />
           </nav>
