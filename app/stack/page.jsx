@@ -224,10 +224,10 @@ const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 const RANK_VALUES = { A: 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, J: 11, Q: 12, K: 13 };
 
 const MNEMONICA_STACK = [
-  '4C', '2H', '7D', '3C', '4H', '6D', 'AS', '5H', '9S', '2S', 'QH', '3D', 'QC', 
+  '4C', '2H', '7D', '3C', '4H', '6D', 'AS', '5H', '9S', '2S', 'QH', '3D', 'QC',
   '8H', '6S', '5S', '9H', 'KC', '2D', 'JH', '3S', '8S', '6H', '10C', '5D', 'KD',
-  '2C', '3H', '8D', '5C', 'KS', 'JD', '8C', '10S', 'KH', 'JC', '7S', '10H', 'AD', 
-  '4S', '7H', '4D', 'AC', '9C', 'JS', 'QD', '7C', 'QS', '10D', '6C', 'AH', '9D'
+  '2C', '3H', '8D', '5C', 'KS', 'JD', '8C', '10S', 'KH', 'JC', '7S', '10H', 'AD',
+  '4S', '7H', '4D', 'AC', '9C', 'JS', 'QD', '7C', 'QS', '10D', '6C', 'AH', '9D',
 ];
 
 const normalizeCardInput = (value = '') => {
@@ -335,6 +335,8 @@ const StackTrainer = ({ theme, inputStyle }) => {
   const [testAnswer, setTestAnswer] = useState('');
   const [testResults, setTestResults] = useState(null);
   const [reviewQuestions, setReviewQuestions] = useState([]);
+  const [acanScenario, setAcanScenario] = useState(null);
+  const [showAcanInfo, setShowAcanInfo] = useState(false);
 
   useEffect(() => {
     setStackState(loadJson(STACK_TRAINER_KEY, getDefaultStackState()));
@@ -351,6 +353,34 @@ const StackTrainer = ({ theme, inputStyle }) => {
   const [rangeStart, rangeEnd] = rangeToIndexes(stackState.viewRange);
   const visibleCards = cards.slice(rangeStart, Math.min(rangeEnd, cards.length));
   const currentTestQuestion = testQuestions[testIndex];
+
+  const createAcanScenario = () => {
+    if (!cards.length) return null;
+    const cardIndex = getRandomInt(cards.length);
+    return {
+      card: cards[cardIndex],
+      cardIndex,
+      namedNumber: getRandomInt(52) + 1,
+    };
+  };
+
+  const nextAcanScenario = () => {
+    const next = createAcanScenario();
+    setAcanScenario(next);
+    setShowAcanInfo(false);
+  };
+
+  useEffect(() => {
+    if (cards.length) {
+      setAcanScenario(createAcanScenario());
+      setShowAcanInfo(false);
+    } else {
+      setAcanScenario(null);
+    }
+  }, [stackState.selectedDeck, stackState.customInput, stackState.eightKingsSuitOrder]);
+
+  const acanCurrentPosition = acanScenario ? acanScenario.cardIndex + 1 : null;
+  const acanDifference = acanScenario ? acanScenario.namedNumber - acanCurrentPosition : null;
 
   const updateStats = (correct) => {
     const current = stackState.stats || getDefaultStackState().stats;
@@ -563,6 +593,48 @@ const StackTrainer = ({ theme, inputStyle }) => {
         {cards.length < 52 && stackState.selectedDeck === 'custom' && <p style={{ color: '#ff9b9b', fontSize: 12, lineHeight: 1.5 }}>커스텀 덱은 52장을 입력해야 전체 퀴즈가 정확히 작동합니다.</p>}
       </div>
 
+      <SectionTitle icon={Sparkles} title="아칸 연습" subtitle="관객이 자유롭게 말한 카드와 숫자를 상상하고, 현재 스택 기준으로 어떻게 처리할지 머릿속으로 리허설합니다." />
+      <div style={{ background: theme.inputBg, border: `1px solid ${theme.border}`, borderRadius: 18, padding: 18, marginBottom: 4 }}>
+        {acanScenario ? (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
+              <div style={{ background: theme.softCard, border: `1px solid ${theme.border}`, borderRadius: 16, padding: '18px 12px', textAlign: 'center' }}>
+                <div style={{ color: theme.sub, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 10 }}>Named Card</div>
+                <div style={{ color: cardColor(acanScenario.card, theme), fontSize: 'clamp(38px, 10vw, 64px)', fontWeight: 900, lineHeight: 1 }}>{formatCard(acanScenario.card)}</div>
+                <div style={{ color: theme.sub, fontSize: 12, marginTop: 10 }}>관객이 부른 카드</div>
+              </div>
+              <div style={{ background: theme.softCard, border: `1px solid ${theme.border}`, borderRadius: 16, padding: '18px 12px', textAlign: 'center' }}>
+                <div style={{ color: theme.sub, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 10 }}>Named Number</div>
+                <div style={{ color: theme.gold, fontSize: 'clamp(38px, 10vw, 64px)', fontWeight: 900, lineHeight: 1 }}>{acanScenario.namedNumber}</div>
+                <div style={{ color: theme.sub, fontSize: 12, marginTop: 10 }}>관객이 부른 숫자</div>
+              </div>
+            </div>
+
+            {showAcanInfo && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+                <div style={{ border: `1px solid ${theme.border}`, borderRadius: 14, padding: 12, background: theme.softCard }}>
+                  <div style={{ color: theme.sub, fontSize: 11 }}>현재 스택 위치</div>
+                  <div style={{ color: theme.gold, fontWeight: 900, fontSize: 22, marginTop: 4 }}>{acanCurrentPosition}번</div>
+                </div>
+                <div style={{ border: `1px solid ${theme.border}`, borderRadius: 14, padding: 12, background: theme.softCard }}>
+                  <div style={{ color: theme.sub, fontSize: 11 }}>목표 숫자와의 차이</div>
+                  <div style={{ color: theme.gold, fontWeight: 900, fontSize: 22, marginTop: 4 }}>{acanDifference > 0 ? `+${acanDifference}` : acanDifference}</div>
+                </div>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <button onClick={() => setShowAcanInfo(!showAcanInfo)} style={smallButtonStyle(showAcanInfo)}>{showAcanInfo ? '위치/차이 숨기기' : '위치/차이 보기'}</button>
+              <button onClick={nextAcanScenario} style={smallButtonStyle(true)}>다음</button>
+            </div>
+          </div>
+        ) : (
+          <div style={{ color: theme.sub, lineHeight: 1.55 }}>
+            선택한 덱에 카드가 없습니다. 커스텀 덱을 사용하는 경우 카드를 먼저 입력해 주세요.
+          </div>
+        )}
+      </div>
+
     </div>
   );
 };
@@ -651,7 +723,7 @@ export default function StackTrainerPage() {
           </div>
           <h1 style={{ margin: 0, fontFamily: "'Cinzel', serif", fontSize: 'clamp(30px, 6vw, 52px)', lineHeight: 1.08 }}>Stack Trainer</h1>
           <p style={{ margin: '12px auto 0', maxWidth: 620, color: theme.sub, lineHeight: 1.65, fontSize: 14 }}>
-            네모니카, 8 Kings, 커스텀 스택을 넓은 화면에서 낱말카드·전체 순서·랜덤 테스트로 연습합니다.
+            네모니카, 8 Kings, 커스텀 스택을 넓은 화면에서 낱말카드·전체 순서·랜덤 테스트·아칸 연습으로 훈련합니다.
           </p>
         </div>
 
