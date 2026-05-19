@@ -49,16 +49,16 @@ const PRACTICE_CATEGORIES = [
 
 const RESOURCE_LINKS = [
   {
-    title: '김찬엽 마술사의 유튜브 채널',
+    title: '친구의 마술 채널',
     description: '추천 영상, 공연 기록, 렉처 후기 등을 모아둘 공간입니다.',
-    url: 'https://www.youtube.com/@__duke__kim',
-    label: 'YouTube 링크 클릭',
+    url: '',
+    label: 'YouTube 링크 넣기',
   },
   {
     title: '추천 마술샵',
     description: '카드, 동전, 클로즈업 도구 등 연습에 필요한 자료를 연결할 수 있습니다.',
-    url: 'https://www.neoinception.co.kr',
-    label: '네오매직 링크 클릭',
+    url: '',
+    label: '네오매직 링크 넣기',
   },
   {
     title: '추천 자료',
@@ -826,7 +826,7 @@ export default function MagicPracticeTracker() {
 
   const exportBackup = () => {
     const payload = {
-      app: 'Magic Practice',
+      app: 'Magic Trainer',
       exportedAt: new Date().toISOString(),
       practiceData,
       notes,
@@ -994,7 +994,7 @@ export default function MagicPracticeTracker() {
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 8 }}>
             <Wand2 size={20} style={{ color: theme.gold }} />
-            <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: 30, fontWeight: 600, letterSpacing: '0.12em', margin: 0, color: theme.text }}>Magic Practice</h1>
+            <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: 30, fontWeight: 600, letterSpacing: '0.12em', margin: 0, color: theme.text }}>Magic Trainer</h1>
             <Wand2 size={20} style={{ color: theme.gold, transform: 'scaleX(-1)' }} />
           </div>
           <p style={{ fontSize: 13, letterSpacing: '0.18em', textTransform: 'uppercase', color: theme.sub, margin: 0 }}>혼자 조용히 연습하고, 기록하고, 성장하는 마술 연습 다이어리 앱</p>
@@ -1114,7 +1114,8 @@ export default function MagicPracticeTracker() {
           <nav style={{ padding: 14, borderRight: `1px solid ${theme.border}`, display: 'flex', flexDirection: 'column', gap: 8 }}>
             <MenuButton id="Practice" icon={BarChart3} label="Practice" />
             <MenuButton id="Magic Notes" icon={BookOpen} label="Magic Notes" />
-            <MenuLink href="/stack" icon={Sparkles} label="Stack Trainer" subtitle="전용 화면으로 열기" />
+            <MenuLink href="/stack" icon={Sparkles} label="Stack Trainer" subtitle="스택 암기 훈련" />
+            <MenuLink href="/acan" icon={Wand2} label="아칸 연습" subtitle="ACAN 상황 리허설" />
             <MenuButton id="Links" icon={LinkIcon} label="Links" />
             <MenuButton id="Settings" icon={Settings} label="Settings" />
           </nav>
